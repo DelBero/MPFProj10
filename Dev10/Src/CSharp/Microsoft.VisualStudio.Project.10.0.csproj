@@ -145,6 +145,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveConfigurationChangedEventArgs.cs" />
+    <Compile Include="Automation\OAProjectItem.cs" />
+    <Compile Include="Automation\OASolutionFolder.cs" />
+    <Compile Include="Automation\VSProject\OAReferenceBase.cs" />
+    <Compile Include="ConnectionPoint.cs" />
+    <Compile Include="EnumConnectionPoints.cs" />
+    <Compile Include="IEventSource.cs" />
+    <Compile Include="ObjectReferenceEqualityComparer.cs" />
     <Compile Include="ProjectFileOpenedEventArgs.cs" />
     <Compile Include="AssemblyReferenceNode.cs" />
     <Compile Include="AutomationBrowsableAttribute.cs" />
@@ -158,7 +165,6 @@
     <Compile Include="BuildStatus.cs" />
     <Compile Include="CommandOrigin.cs" />
     <Compile Include="ComReferenceProperties.cs" />
-    <Compile Include="ConnectionPoint`1.cs" />
     <Compile Include="DataCacheEntry.cs" />
     <Compile Include="DebugMode.cs" />
     <Compile Include="DebugModeConverter.cs" />
@@ -168,7 +174,6 @@
     <Compile Include="DesignTimeAssemblyResolution.MockEngine.cs" />
     <Compile Include="DesignTimeAssemblyResolution.RarInputs.cs" />
     <Compile Include="DragDropHelper.cs" />
-    <Compile Include="EnumConnectionPoints`1.cs" />
     <Compile Include="EnumFORMATETC.cs" />
     <Compile Include="EnumSTATDATA.cs" />
     <Compile Include="FileChangedOnDiskEventArgs.cs" />
@@ -183,7 +188,6 @@
     <Compile Include="HierarchyNodeEventArgs.cs" />
     <Compile Include="IBuildDependencyOnProjectContainer.cs" />
     <Compile Include="IBuildDependencyUpdate.cs" />
-    <Compile Include="IEventSource`1.cs" />
     <Compile Include="IProjectConfigProperties.cs" />
     <Compile Include="IProjectEvents.cs" />
     <Compile Include="IProjectEventsListener.cs" />
@@ -196,7 +200,6 @@
     <Compile Include="MSBuildGeneratedItemType.cs" />
     <Compile Include="MSBuildResult.cs" />
     <Compile Include="MSBuildTarget.cs" />
-    <Compile Include="ObjectReferenceEqualityComparer`1.cs" />
     <Compile Include="OleServiceProvider.ServiceData.cs" />
     <Compile Include="OutputType.cs" />
     <Compile Include="OutputTypeConverter.cs" />
@@ -215,18 +218,15 @@
     <Compile Include="Automation\OANestedProjectItem.cs" />
     <Compile Include="Automation\OANullProperty.cs" />
     <Compile Include="Automation\OAProject.cs" />
-    <Compile Include="Automation\OAProjectItem`1.cs" />
     <Compile Include="Automation\OAProjectItems.cs" />
     <Compile Include="Automation\OAProperties.cs" />
     <Compile Include="Automation\OAProperty.cs" />
     <Compile Include="Automation\OAReferenceFolderItem.cs" />
     <Compile Include="Automation\OAReferenceItem.cs" />
-    <Compile Include="Automation\OASolutionFolder`1.cs" />
     <Compile Include="Automation\VSProject\OAAssemblyReference.cs" />
     <Compile Include="Automation\VSProject\OABuildManager.cs" />
     <Compile Include="Automation\VSProject\OAComReference.cs" />
     <Compile Include="Automation\VSProject\OAProjectReference.cs" />
-    <Compile Include="Automation\VSProject\OAReferenceBase`1.cs" />
     <Compile Include="Automation\VSProject\OAReferences.cs" />
     <Compile Include="Automation\VSProject\OAVSProject.cs" />
     <Compile Include="Automation\VSProject\OAVSProjectItem.cs" />

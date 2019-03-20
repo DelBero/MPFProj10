@@ -48,20 +48,28 @@ a particular purpose and non-infringement.
 
 namespace Microsoft.VisualStudio.Project
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Runtime.InteropServices;
-	using Interlocked = System.Threading.Interlocked;
-	using ObjectExtenders = EnvDTE.ObjectExtenders;
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.VisualStudio.Shell;
+    using Interlocked = System.Threading.Interlocked;
+    using ObjectExtenders = EnvDTE.ObjectExtenders;
 
-	/// <summary>
-	/// Defines abstract package.
-	/// </summary>
-	[ComVisible(true)]
+    /// <summary>
+    /// Defines abstract package.
+    /// </summary>
+    [ComVisible(true)]
 	[CLSCompliant(false)]
-	public abstract class ProjectPackage : Microsoft.VisualStudio.Shell.Package
+	public abstract class ProjectPackage :
+#if PACKAGE_ASYNC
+        Microsoft.VisualStudio.Shell.AsyncPackage
+#else
+        Microsoft.VisualStudio.Shell.Package
+#endif
 	{
-		#region fields
+#region fields
 		/// <summary>
 		/// This is the place to register all the solution listeners.
 		/// </summary>
@@ -95,9 +103,9 @@ namespace Microsoft.VisualStudio.Project
 		private static SingleFileGeneratorNodeExtenderProvider _singleFileGeneratorNodeExtenderProvider;
 		private static int _singleFileGeneratorNodeExtenderCookie;
 
-		#endregion
+#endregion
 
-		#region properties
+#region properties
 		/// <summary>
 		/// Add your listener to this list. They should be added in the overridden Initialize befaore calling the base.
 		/// </summary>
@@ -111,10 +119,36 @@ namespace Microsoft.VisualStudio.Project
 
 		public abstract string ProductUserContext { get; }
 
-		#endregion
+        #endregion
 
-		#region methods
-		protected override void Initialize()
+        #region methods
+#if PACKAGE_ASYNC
+        protected override async System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        {
+            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            base.InitializeAsync(cancellationToken, progress);
+
+            try
+            {
+                // this block assumes that the ProjectPackage instances will all be initialized on the same thread,
+                // but doesn't assume that only one ProjectPackage instance exists at a time
+                if (Interlocked.Increment(ref _singleFileGeneratorNodeExtenderReferenceCount) == 1)
+                {
+                    ObjectExtenders objectExtenders = (ObjectExtenders)GetService(typeof(ObjectExtenders));
+                    _singleFileGeneratorNodeExtenderProvider = new SingleFileGeneratorNodeExtenderProvider();
+                    string extenderCatId = typeof(FileNodeProperties).GUID.ToString("B");
+                    string extenderName = SingleFileGeneratorNodeExtenderProvider.Name;
+                    string localizedName = extenderName;
+                    _singleFileGeneratorNodeExtenderCookie = objectExtenders.RegisterExtenderProvider(extenderCatId, extenderName, _singleFileGeneratorNodeExtenderProvider, localizedName);
+                }
+            }
+            finally
+            {
+                _initialized = true;
+            }
+        }
+#else
+        protected override void Initialize()
 		{
 			base.Initialize();
 
@@ -148,8 +182,9 @@ namespace Microsoft.VisualStudio.Project
 				_initialized = true;
 			}
 		}
+#endif
 
-		protected override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
 		{
 			// Unadvise solution listeners.
 			try
@@ -176,6 +211,6 @@ namespace Microsoft.VisualStudio.Project
 				base.Dispose(disposing);
 			}
 		}
-		#endregion
+#endregion
 	}
 }
